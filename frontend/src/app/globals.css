@@ -1,0 +1,109 @@
+/* nexus/frontend/src/app/globals.css */
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --neon-blue:   #00d4ff;
+  --neon-purple: #7c3aed;
+  --neon-green:  #10b981;
+  --neon-amber:  #f59e0b;
+  --bg:          #070b14;
+  --bg-2:        #0d1422;
+  --bg-3:        #111827;
+  --border:      #1e2d3d;
+  --muted:       #64748b;
+}
+
+/* Mapbox overrides */
+.mapboxgl-ctrl-logo { display: none !important; }
+.mapboxgl-ctrl-attrib { display: none !important; }
+.mapboxgl-popup-content {
+  background: #0d1422 !important;
+  border: 1px solid #1e2d3d !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important;
+  color: #e2e8f0 !important;
+}
+.mapboxgl-popup-tip { display: none !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1e2d3d; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #2d4a6a; }
+
+/* Scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.025) 2px,
+    rgba(0, 0, 0, 0.025) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Neon text utility */
+.text-neon-glow {
+  text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+}
+
+/* Panel glassmorphism */
+.glass-panel {
+  background: rgba(13, 20, 34, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(30, 45, 61, 0.8);
+}
+
+/* Cluster marker styles */
+.nexus-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  font-weight: 700;
+}
+.nexus-cluster:hover { transform: scale(1.1); }
+
+.nexus-marker {
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.nexus-marker:hover { transform: scale(1.2); }
+
+/* Range slider custom styles */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  width: 100%;
+}
+input[type='range']::-webkit-slider-track {
+  height: 3px;
+  background: #1e2d3d;
+  border-radius: 2px;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--neon-blue);
+  margin-top: -5.5px;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(0, 212, 255, 0.5);
+}
+input[type='range']:focus { outline: none; }

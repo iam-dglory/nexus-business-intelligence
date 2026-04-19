@@ -1,0 +1,153 @@
+// nexus/backend/prisma/schema.prisma
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+}
+
+enum BusinessType {
+  B2B
+  B2C
+  HYBRID
+}
+
+enum UserRole {
+  USER
+  BUSINESS
+  ADMIN
+}
+
+enum ConnectionRole {
+  BUYER
+  SELLER
+  INVESTOR
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String
+  name         String
+  role         UserRole   @default(USER)
+  avatarUrl    String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  company      Company?
+  sentConnections     Connection[] @relation("Sender")
+  receivedConnections Connection[] @relation("Receiver")
+  bookmarks    Bookmark[]
+
+  @@map("users")
+}
+
+model Company {
+  id           String       @id @default(uuid())
+  name         String
+  slug         String       @unique
+  description  String?      @db.Text
+  industry     String
+  businessType BusinessType
+  foundedYear  Int
+  employeeCount Int?
+  valuation    BigInt?       // stored in USD cents
+  valuationLabel String?     // e.g. "$2.1B"
+  growthRate   Float?        // YoY percentage
+  website      String?
+  logoUrl      String?
+
+  // Location
+  city         String
+  country      String
+  lat          Float
+  lng          Float
+
+  isActive     Boolean      @default(true)
+  isFeatured   Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  ownerId      String?      @unique
+  owner        User?        @relation(fields: [ownerId], references: [id])
+
+  updates      CompanyUpdate[]
+  connections  Connection[]
+  bookmarks    Bookmark[]
+  tags         CompanyTag[]
+
+  @@index([industry])
+  @@index([businessType])
+  @@index([foundedYear])
+  @@index([country])
+  @@map("companies")
+}
+
+model CompanyUpdate {
+  id        String   @id @default(uuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  title     String
+  body      String?  @db.Text
+  category  String   @default("news") // news | funding | product | milestone
+  createdAt DateTime @default(now())
+
+  @@index([companyId])
+  @@map("company_updates")
+}
+
+model CompanyTag {
+  id        String  @id @default(uuid())
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tag       String
+
+  @@unique([companyId, tag])
+  @@map("company_tags")
+}
+
+model Connection {
+  id         String           @id @default(uuid())
+  senderId   String
+  sender     User             @relation("Sender", fields: [senderId], references: [id])
+  companyId  String
+  company    Company          @relation(fields: [companyId], references: [id])
+  role       ConnectionRole
+  message    String?          @db.Text
+  status     ConnectionStatus @default(PENDING)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  // Optional: track who responded (company owner)
+  respondedAt DateTime?
+  receiverId  String?
+  receiver    User?     @relation("Receiver", fields: [receiverId], references: [id])
+
+  @@unique([senderId, companyId])
+  @@index([companyId])
+  @@index([senderId])
+  @@map("connections")
+}
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, companyId])
+  @@map("bookmarks")
+}

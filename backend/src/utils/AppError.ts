@@ -1,0 +1,11 @@
+// nexus/backend/src/utils/AppError.ts
+export class AppError extends Error {
+  constructor(
+    message: string,
+    public readonly statusCode: number = 500,
+  ) {
+    super(message);
+    this.name = 'AppError';
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
