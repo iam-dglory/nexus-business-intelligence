@@ -70,11 +70,11 @@ export function CompanyPanel() {
       {company && (
         <motion.aside
           key="company-panel"
-          initial={{ x: '100%', opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: '100%', opacity: 0 }}
-          transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-          className="absolute right-0 top-0 bottom-0 w-72 glass-panel border-l border-border z-20 overflow-y-auto flex flex-col"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="w-full h-full glass-panel overflow-y-auto flex flex-col"
         >
           {/* Header */}
           <div className="sticky top-0 bg-bg-2 border-b border-border p-4 z-10">

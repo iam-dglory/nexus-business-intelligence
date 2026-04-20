@@ -112,7 +112,7 @@ export async function listCompanies(req: Request, res: Response, next: NextFunct
         select: companySelect,
         orderBy: [{ isFeatured: 'desc' }, { growthRate: 'desc' }],
         skip,
-        take: limitNum,
+        take: limitNum > 0 ? limitNum : 500,
       }),
       prisma.company.count({ where }),
     ]);

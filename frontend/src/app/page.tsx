@@ -1,48 +1,57 @@
-// nexus/frontend/src/app/page.tsx
 'use client';
-import { useEffect } from 'react';
 import { TopBar } from '../components/ui/TopBar';
 import { Sidebar } from '../components/sidebar/Sidebar';
 import { MapView } from '../components/map/MapView';
 import { CompanyPanel } from '../components/panels/CompanyPanel';
 import { ConnectModal } from '../components/panels/ConnectModal';
 import { TrendingBar } from '../components/ui/TrendingBar';
-import { CompareBar } from '../components/ui/CompareBar';
 import { useSocket } from '../hooks/useSocket';
 import { useStore } from '../store/useStore';
 
 export default function HomePage() {
   useSocket();
   const sidebarOpen = useStore((s) => s.sidebarOpen);
-  const compareIds = useStore((s) => s.compareIds);
+  const selectedCompany = useStore((s) => s.selectedCompany);
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden">
+    <div style={{ display:'flex', flexDirection:'column', height:'100vh', width:'100vw', overflow:'hidden', background:'#070b14' }}>
       <TopBar />
-      <div className="flex flex-1 overflow-hidden relative">
+      <div style={{ display:'flex', flex:1, overflow:'hidden', position:'relative' }}>
+
         {/* Sidebar */}
-        <aside
-          className={`
-            glass-panel border-r border-border z-20 flex-shrink-0
-            transition-all duration-300 ease-in-out overflow-y-auto
-            ${sidebarOpen ? 'w-56' : 'w-0 overflow-hidden'}
-          `}
-        >
+        <aside style={{
+          width: sidebarOpen ? '200px' : '0',
+          flexShrink: 0,
+          overflow: 'hidden',
+          transition: 'width 0.3s ease',
+          background: 'rgba(13,20,34,0.95)',
+          borderRight: '1px solid #1e2d3d',
+          overflowY: sidebarOpen ? 'auto' : 'hidden',
+          zIndex: 20,
+        }}>
           {sidebarOpen && <Sidebar />}
         </aside>
 
-        {/* Map canvas */}
-        <main className="flex-1 relative">
+        {/* Map */}
+        <main style={{ flex:1, position:'relative', overflow:'hidden', minWidth:0 }}>
           <MapView />
           <TrendingBar />
-          {compareIds.length > 0 && <CompareBar />}
         </main>
 
-        {/* Company detail panel */}
-        <CompanyPanel />
+        {/* Company detail panel — sits beside map, not over it */}
+        {selectedCompany && (
+          <div style={{
+            width: '300px',
+            flexShrink: 0,
+            background: 'rgba(13,20,34,0.98)',
+            borderLeft: '1px solid #1e2d3d',
+            overflowY: 'auto',
+            zIndex: 20,
+          }}>
+            <CompanyPanel />
+          </div>
+        )}
       </div>
-
-      {/* Modals */}
       <ConnectModal />
     </div>
   );
