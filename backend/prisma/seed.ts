@@ -129,7 +129,7 @@ async function main() {
   await prisma.user.deleteMany();
 
   // Create admin user
-  const bcrypt = await import('bcryptjs');
+  const bcrypt = require('bcryptjs');
   const passwordHash = await bcrypt.hash('admin123', 10);
   await prisma.user.create({
     data: {
